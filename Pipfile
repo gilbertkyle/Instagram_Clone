@@ -7,6 +7,8 @@ verify_ssl = true
 autopep8 = "*"
 
 [packages]
+pillow = "*"
+django-rest-knox = "*"
 
 [requires]
 python_version = "3.7"
