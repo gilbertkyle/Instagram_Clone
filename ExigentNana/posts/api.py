@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets, permissions
 from .serializers import PostSerializer, PostUploadSerializer
 from rest_framework.response import Response
 
@@ -14,3 +14,14 @@ class PostAPI(generics.CreateAPIView):
         return Response({
             "post": PostSerializer(post, context=self.get_serializer_context()).data
         })
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    serializer_class = PostSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get_queryset(self):
+        return self.request.user.post_set.all()

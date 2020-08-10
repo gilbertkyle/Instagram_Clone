@@ -9,3 +9,6 @@ export const GET_MESSAGES = "GET MESSAGES";
 export const CREATE_MESSAGE = "CREATE_MESSAGE";
 export const AUTH_ERROR = "AUTH_ERROR";
 export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
+export const POSTS_LOADING = "POSTS_LOADING";
+export const POSTS_LOADED = "POSTS_LOADED";
+export const POSTS_FAILED = "POSTS_FAILED";

@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 const styles = theme => ({
   root: {
@@ -47,6 +48,10 @@ export class PostForm extends Component {
   };
 
   render() {
+    const { user } = this.props;
+    if (user == null) {
+      return <Redirect to="/login" />;
+    }
     const { classes } = this.props;
     return (
       <div className={classes.root}>
