@@ -30,11 +30,15 @@ export class PostForm extends Component {
     });
   };
 
+  handleCaptionChange = e => {
+    this.setState({ caption: e.target.value });
+  };
+
   fileUploadHandler = () => {
     const { user } = this.props;
     const fd = new FormData();
     fd.append("image", this.state.image, this.state.image.name);
-    fd.append("caption", "test caption");
+    fd.append("caption", this.state.caption);
     fd.append("author", user.id);
 
     axios
@@ -57,7 +61,7 @@ export class PostForm extends Component {
       <div className={classes.root}>
         <form>
           <FormControl>
-            <TextField multiline rows={4} name="caption" />
+            <TextField multiline rows={4} name="caption" onChange={this.handleCaptionChange} />
           </FormControl>
           <FormControl>
             <input
