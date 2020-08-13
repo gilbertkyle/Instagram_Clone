@@ -12,3 +12,6 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const POSTS_LOADING = "POSTS_LOADING";
 export const POSTS_LOADED = "POSTS_LOADED";
 export const POSTS_FAILED = "POSTS_FAILED";
+export const UPLOADING_POST = "UPLOADING_POST";
+export const UPLOAD_SUCCESS = "UPLOAD_SUCCESS";
+export const UPLOAD_FAIL = "UPLOAD_FAIL";

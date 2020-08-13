@@ -6,6 +6,8 @@ import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import { uploadPost } from "../../actions/posts";
+import PropTypes from "prop-types";
 
 const styles = theme => ({
   root: {
@@ -22,6 +24,11 @@ export class PostForm extends Component {
   state = {
     image: null,
     caption: ""
+  };
+
+  static propTypes = {
+    uploadPost: PropTypes.func.isRequired,
+    uploadSuccess: PropTypes.bool
   };
 
   fileSelectedHandler = e => {
@@ -41,20 +48,16 @@ export class PostForm extends Component {
     fd.append("caption", this.state.caption);
     fd.append("author", user.id);
 
-    axios
-      .post("posts/", fd)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    this.props.uploadPost(fd);
   };
 
   render() {
-    const { user } = this.props;
+    const { user, uploadSuccess } = this.props;
     if (user == null) {
       return <Redirect to="/login" />;
+    }
+    if (uploadSuccess) {
+      return <Redirect to="/" />;
     }
     const { classes } = this.props;
     return (
@@ -89,7 +92,11 @@ export class PostForm extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.auth.user
+  user: state.auth.user,
+  uploadSuccess: state.posts.uploadSuccess
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(PostForm));
+export default connect(
+  mapStateToProps,
+  { uploadPost }
+)(withStyles(styles)(PostForm));
