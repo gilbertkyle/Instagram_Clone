@@ -6,7 +6,8 @@ router = routers.DefaultRouter()
 router.register('all', api.PostViewSet, 'posts')
 
 urlpatterns = [
-    path('', api.PostAPI.as_view())
+    path('', api.PostAPI.as_view()),
+    path('comment', api.PostCommentAPI.as_view())
 ]
 
 
