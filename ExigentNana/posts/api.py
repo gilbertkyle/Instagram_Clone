@@ -1,6 +1,7 @@
 from rest_framework import generics, viewsets, permissions, mixins
 from .serializers import PostSerializer, PostUploadSerializer, CommentSerializer, CommentUploadSerializer
 from rest_framework.response import Response
+from .models import Comment
 
 
 class PostAPI(generics.CreateAPIView):
@@ -26,8 +27,14 @@ class PostViewSet(viewsets.ModelViewSet):
         return self.request.user.post_set.all()
 
 
-class PostCommentAPI(generics.CreateAPIView):
-    serializer_class = CommentUploadSerializer
+class PostCommentAPI(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return CommentSerializer
+        if self.request.method == "POST":
+            return CommentUploadSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
