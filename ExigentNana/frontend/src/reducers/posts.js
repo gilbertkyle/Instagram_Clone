@@ -4,13 +4,21 @@ import {
   POSTS_FAILED,
   UPLOADING_POST,
   UPLOAD_FAIL,
-  UPLOAD_SUCCESS
+  UPLOAD_SUCCESS,
+  COMMENTS_LOADING,
+  COMMENTS_LOADED,
+  COMMENTS_FAILED,
+  POST_SELECTED,
+  MODAL_CLOSE
 } from "../actions/types";
 
 const initialState = {
   posts: [],
   isLoading: false,
-  uploadSuccess: false
+  uploadSuccess: false,
+  comments: [],
+  selectedPost: null,
+  modalOpen: false
 };
 
 export default function(state = initialState, action) {
@@ -48,6 +56,27 @@ export default function(state = initialState, action) {
         ...state,
         uploading: false,
         uploadSuccess: false
+      };
+    case COMMENTS_LOADING:
+    case COMMENTS_FAILED:
+      return {
+        ...state
+      };
+    case COMMENTS_LOADED:
+      return {
+        ...state,
+        comments: action.payload
+      };
+    case POST_SELECTED:
+      return {
+        ...state,
+        selectedPost: action.payload,
+        modalOpen: true
+      };
+    case MODAL_CLOSE:
+      return {
+        ...state,
+        modalOpen: false
       };
     default:
       return state;

@@ -6,7 +6,12 @@ import {
   POSTS_FAILED,
   UPLOADING_POST,
   UPLOAD_FAIL,
-  UPLOAD_SUCCESS
+  UPLOAD_SUCCESS,
+  COMMENT_FAIL,
+  COMMENT_SUCCESS,
+  COMMENTS_LOADING,
+  COMMENTS_LOADED,
+  COMMENTS_FAILED
 } from "../actions/types";
 import { returnErrors } from "./messages";
 
@@ -43,6 +48,48 @@ export const uploadPost = formData => dispatch => {
       dispatch(returnErrors(error.response.data, error.response.status));
       dispatch({
         type: UPLOAD_FAIL
+      });
+    });
+};
+
+export const postComment = formData => dispatch => {
+  axios
+    .post("posts/comment/", formData)
+    .then(response => {
+      dispatch({
+        type: COMMENT_SUCCESS,
+        payload: response.data
+      });
+    })
+    .catch(error => {
+      dispatch(returnErrors(error.response.data, error.response.status));
+      dispatch({
+        type: COMMENT_FAIL
+      });
+    });
+};
+
+export const getComments = post_id => dispatch => {
+  dispatch({ type: COMMENTS_LOADING });
+  const params = {
+    params: {
+      id: post_id
+    }
+  };
+
+  axios
+    .get("posts/comment", params)
+    .then(response => {
+      console.log(response);
+      dispatch({
+        type: COMMENTS_LOADED,
+        payload: response.data
+      });
+    })
+    .catch(error => {
+      dispatch(returnErrors(error.response.data, error.response.status));
+      dispatch({
+        type: COMMENTS_FAILED
       });
     });
 };

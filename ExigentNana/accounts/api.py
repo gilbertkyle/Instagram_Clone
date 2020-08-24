@@ -42,3 +42,17 @@ class UserAPI(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class FriendAPI(generics.ListCreateAPIView):
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        user_id = request.data.get('user_id', 0)
+        friend_id = request.data.get('friend_id', 0)
+        user = User.objects.get(id=user_id)
+        friend = User.objects.get(id=friend_id)
+        user.friends.add(friend)
+        return Response({
+            "user": UserSerializer(user, context=self.get_serializer_context()).data
+        })

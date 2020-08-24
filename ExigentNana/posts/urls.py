@@ -7,7 +7,7 @@ router.register('all', api.PostViewSet, 'posts')
 
 urlpatterns = [
     path('', api.PostAPI.as_view()),
-    path('comment', api.PostCommentAPI.as_view())
+    path('comment', api.CommentAPI.as_view())
 ]
 
 
