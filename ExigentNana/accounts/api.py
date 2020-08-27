@@ -2,6 +2,9 @@ from rest_framework import generics, permissions
 from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
 from rest_framework.response import Response
 from knox.models import AuthToken
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class RegisterAPI(generics.GenericAPIView):
@@ -56,3 +59,6 @@ class FriendAPI(generics.ListCreateAPIView):
         return Response({
             "user": UserSerializer(user, context=self.get_serializer_context()).data
         })
+
+    def get_queryset(self):
+        return self.request.user.friends.all()

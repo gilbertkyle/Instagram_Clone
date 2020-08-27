@@ -2,8 +2,11 @@ from rest_framework import generics, viewsets, permissions, mixins, status
 from .serializers import PostSerializer, PostUploadSerializer, CommentSerializer, CommentUploadSerializer
 from accounts.serializers import UserSerializer
 from rest_framework.response import Response
-from .models import Comment
+from .models import Comment, Post
 from django.http import Http404
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class PostAPI(generics.CreateAPIView):
@@ -30,13 +33,13 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class CommentAPI(generics.ListCreateAPIView):
-    #queryset = Comment.objects.all()
 
     def get_serializer_class(self):
         if self.request.method == "GET":
             return CommentSerializer
         if self.request.method == "POST":
             return CommentUploadSerializer
+        return CommentSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -49,3 +52,26 @@ class CommentAPI(generics.ListCreateAPIView):
     def get_queryset(self):
         post_id = self.request.query_params.get('id', -1)
         return Comment.objects.filter(post__id=post_id)
+
+
+class PostSetAPI(generics.ListAPIView):
+    """
+    Returns all the posts from a particular user
+    """
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        username = self.kwargs.get("username")
+        return Post.objects.filter(author__username=username)
+
+
+class FeedAPI(generics.ListAPIView):
+    """
+    This API endpoint gets posts from all of the current users friends
+    """
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = User.objects.get(username=self.kwargs.get("username"))
+        friends = user.friends.all()
+        return Post.objects.filter(author__in=friends)

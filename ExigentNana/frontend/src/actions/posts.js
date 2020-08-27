@@ -11,9 +11,28 @@ import {
   COMMENT_SUCCESS,
   COMMENTS_LOADING,
   COMMENTS_LOADED,
-  COMMENTS_FAILED
+  COMMENTS_FAILED,
+  FEED_RETRIEVE_FAIL,
+  FEED_RETRIEVE_SUCCESS
 } from "../actions/types";
 import { returnErrors } from "./messages";
+
+export const retrieveFeed = username => dispatch => {
+  axios
+    .get(`posts/feed/${username}`)
+    .then(response => {
+      dispatch({
+        type: FEED_RETRIEVE_SUCCESS,
+        payload: response.data
+      });
+    })
+    .catch(error => {
+      dispatch(returnErrors(error.response.data, error.response.status));
+      dispatch({
+        type: FEED_RETRIEVE_FAIL
+      });
+    });
+};
 
 export const retrievePosts = () => (dispatch, getState) => {
   dispatch({ type: POSTS_LOADING });
@@ -54,7 +73,7 @@ export const uploadPost = formData => dispatch => {
 
 export const postComment = formData => dispatch => {
   axios
-    .post("posts/comment/", formData)
+    .post("posts/comment", formData)
     .then(response => {
       dispatch({
         type: COMMENT_SUCCESS,

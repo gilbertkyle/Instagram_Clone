@@ -9,11 +9,16 @@ import {
   COMMENTS_LOADED,
   COMMENTS_FAILED,
   POST_SELECTED,
-  MODAL_CLOSE
+  MODAL_CLOSE,
+  COMMENT_SUCCESS,
+  COMMENT_FAIL,
+  FEED_RETRIEVE_FAIL,
+  FEED_RETRIEVE_SUCCESS
 } from "../actions/types";
 
 const initialState = {
   posts: [],
+  feed: [],
   isLoading: false,
   uploadSuccess: false,
   comments: [],
@@ -59,6 +64,7 @@ export default function(state = initialState, action) {
       };
     case COMMENTS_LOADING:
     case COMMENTS_FAILED:
+    case COMMENT_FAIL:
       return {
         ...state
       };
@@ -73,10 +79,28 @@ export default function(state = initialState, action) {
         selectedPost: action.payload,
         modalOpen: true
       };
+    case COMMENT_SUCCESS:
+      return {
+        ...state,
+        selectedPost: {
+          ...state.selectedPost,
+          comments: [...state.selectedPost.comments, action.payload.comment]
+        }
+      };
     case MODAL_CLOSE:
       return {
         ...state,
         modalOpen: false
+      };
+    case FEED_RETRIEVE_SUCCESS:
+      return {
+        ...state,
+        feed: action.payload
+      };
+    case FEED_RETRIEVE_FAIL:
+      return {
+        ...state,
+        feed: []
       };
     default:
       return state;

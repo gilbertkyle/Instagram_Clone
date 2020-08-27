@@ -1,8 +1,11 @@
 import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
+import bindActionCreators, { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import { Dialog, DialogTitle, DialogContent, Grid } from "@material-ui/core";
+import withMediaQuery from "@material-ui/core/";
 import { MODAL_CLOSE } from "../../actions/types";
+import { postComment } from "../../actions/posts";
+import PropTypes from "prop-types";
 
 const styles = theme => ({
   image: {
@@ -11,9 +14,10 @@ const styles = theme => ({
     margin: "auto"
   },
   bigImage: {
-    maxWidth: 800,
+    //maxWidth: 800,
     display: "block",
-    margin: "auto"
+    margin: "auto",
+    width: "100%"
   },
   gridBox: {
     borderColor: "black !important",
@@ -26,14 +30,33 @@ const styles = theme => ({
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
-    minWidth: 1050,
+    minWidth: "800",
     overflow: "auto"
   }
 });
 
 class Modal extends Component {
+  state = {
+    comment: ""
+  };
+
+  static propTypes = {
+    postComment: PropTypes.func.isRequired
+  };
+
+  onChange = e => this.setState({ [e.target.name]: e.target.value });
+
   handleClose = () => {
     this.props.closeModal();
+  };
+
+  handleComment = e => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("author", this.props.user.id);
+    formData.append("comment", this.state.comment);
+    formData.append("post", this.props.selectedPost.id);
+    this.props.postComment(formData);
   };
 
   render() {
@@ -50,7 +73,18 @@ class Modal extends Component {
                 <img src={selectedPost.image} className={classes.bigImage} />
               </Grid>
               <Grid item md={2}>
-                <h5>Hello</h5>
+                {selectedPost.comments.map((comment, key) => {
+                  return (
+                    <Fragment>
+                      <p>{comment.comment}</p>
+                      <span>{new Date(comment.date_created).toLocaleString()}</span>
+                    </Fragment>
+                  );
+                })}
+                <form onSubmit={this.handleComment}>
+                  <input type="text" name="comment" label="Post Comment" onChange={this.onChange} />
+                  <button type="submit">Submit</button>
+                </form>
               </Grid>
             </Grid>
           </DialogContent>
@@ -65,12 +99,14 @@ class Modal extends Component {
 const mapStateToProps = state => ({
   comments: state.posts.comments,
   selectedPost: state.posts.selectedPost,
-  modalOpen: state.posts.modalOpen
+  modalOpen: state.posts.modalOpen,
+  user: state.auth.user
 });
 
 function mapDispatchToProps(dispatch) {
   return {
-    closeModal: () => dispatch({ type: MODAL_CLOSE })
+    closeModal: () => dispatch({ type: MODAL_CLOSE }),
+    postComment: formData => dispatch(postComment(formData))
   };
 }
 

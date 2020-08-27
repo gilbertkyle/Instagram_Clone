@@ -8,7 +8,8 @@ import { HashRouter as Router, Link, Switch, Route } from "react-router-dom";
 import Login from "./accounts/Login";
 import PostForm from "./posts/PostForm";
 import Footer from "./layout/Footer";
-import PostFeed from "./posts/PostFeed";
+import Feed from "./posts/Feed";
+import Profile from "./posts/Profile";
 import { Container } from "@material-ui/core";
 import { Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
@@ -38,7 +39,12 @@ class App extends Component {
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/register" component={() => <Register />} />
                 <Route exact path="/post" component={PostForm} />
-                <Route path="" component={PostFeed} />
+                <Route
+                  exact
+                  path="/:username"
+                  component={({ match }) => <Profile username={match.params.username} />}
+                />
+                <Route path="" component={Feed} />
               </Switch>
               <Footer />
             </Container>
